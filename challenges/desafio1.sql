@@ -1,6 +1,6 @@
 DROP DATABASE IF EXISTS SpotifyClone;
 
-CREATE DATABASE IF NOT EXISTS SpotifyClone;
+CREATE DATABASE SpotifyClone;
 
 USE SpotifyClone;
 
@@ -27,9 +27,7 @@ CREATE TABLE musica (
     nome VARCHAR(45) NOT NULL,
     duracao INT NOT NULL,
     ano_lancamento INT NOT NULL,
-    artista_id INT NOT NULL,
-    album_id INT NOT NULL,
-    FOREIGN KEY (artista_id) REFERENCES artista (artista_id),
+    album_id INT,
     FOREIGN KEY (album_id) REFERENCES album (album_id)
 ) engine = InnoDB;
 
@@ -37,26 +35,26 @@ CREATE TABLE user (
     user_id INT PRIMARY KEY auto_increment,
     nome VARCHAR(45) NOT NULL,
     idade INT NOT NULL,
-    data_assinatura INT NOT NULL,
+    data_assinatura DATE,
     plano_id INT NOT NULL,
     FOREIGN KEY (plano_id) REFERENCES plano (plano_id)
 ) engine = InnoDB;
 
 CREATE TABLE reproduzido (
-    musica_id INT,
     user_id INT,
-    CONSTRAINT PRIMARY KEY (musica_id, user_id),
-    FOREIGN KEY (musica_id) REFERENCES musica (musica_id),
-    FOREIGN KEY (user_id) REFERENCES user (user),
-    data_de_reproducao DATE NOT NULL
+    musica_id INT,
+    date DATETIME,
+    CONSTRAINT PRIMARY KEY (user_id, musica_id),
+    FOREIGN KEY (user_id) REFERENCES user (user_id),
+    FOREIGN KEY (musica_id) REFERENCES musica (musica_id)
 ) engine = InnoDB;
 
 CREATE TABLE seguidores (
   user_id INT,
-  artist_id INT,
-  CONSTRAINT PRIMARY KEY(user_id, artist_id),
-  FOREIGN KEY(user_id) REFERENCES users (id),
-  FOREIGN KEY(artist_id) REFERENCES artists (id)
+  artista_id INT,
+  CONSTRAINT PRIMARY KEY(user_id, artista_id),
+  FOREIGN KEY(user_id) REFERENCES user (user_id),
+  FOREIGN KEY(artista_id) REFERENCES artista (artista_id)
 ) engine = InnoDB;
 
 INSERT INTO plano (nome, valor)
@@ -89,7 +87,7 @@ VALUES
   ('Nina Simone');
 
 
-INSERT INTO album (nome, artist_id)
+INSERT INTO album (nome, artista_id)
 VALUES
   ('Renaissance', 1),
   ('Jazz', 2),
@@ -113,7 +111,7 @@ VALUES
   ("The Bard's Song", 244, 2007, 7),
   ("Feeling Good", 100, 2012, 8);
 
-INSERT INTO seguidores (user_id, artist_id)
+INSERT INTO seguidores (user_id, artista_id)
 VALUES
   (1, 1),
   (1, 2),
@@ -130,7 +128,7 @@ VALUES
   (9, 3),
   (10, 2);
 
-INSERT INTO reproduzido (user_id, music_id, data_de_reproducao)
+INSERT INTO reproduzido (user_id, musica_id, date)
 VALUES
   (1, 8, "2022-02-28 10:45:55"),
   (1, 2, "2020-05-02 05:30:35"),
